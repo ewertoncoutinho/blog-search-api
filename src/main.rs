@@ -84,7 +84,7 @@ async fn main() -> std::io::Result<()> {
             eprintln!("{}", e);
             std::process::exit(1);
         }),
-        api_key: env_var("MEILI_API_KEY").unwrap_or_else(|e| {
+        api_key: env_var("MEILI_MASTER_KEY").unwrap_or_else(|e| {
             eprintln!("{}", e);
             std::process::exit(1);
         }),

@@ -6,7 +6,6 @@ WORKDIR /app
 # Copia o Cargo.toml e Cargo.lock para o cache eficiente
 COPY Cargo.toml Cargo.lock ./
 
-
 # Copia o código da aplicação
 COPY . .
 
