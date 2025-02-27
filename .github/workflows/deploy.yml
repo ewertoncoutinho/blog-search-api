@@ -26,12 +26,12 @@ jobs:
         run: |
           scp -o StrictHostKeyChecking=no -r . ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app
 
-      - name: Connect to EC2 and deploy
+      - name: Build Docker image and deploy
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ubuntu/app
             docker-compose down
-            docker image prune -af
-            docker-compose pull
+            docker image prune -af 
+            docker build -t blog-api .
             docker-compose up -d --build
           EOF
