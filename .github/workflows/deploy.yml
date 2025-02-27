@@ -16,17 +16,18 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Copy files to EC2
         run: |
-          scp -r . ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app
+          scp -o StrictHostKeyChecking=no -r . ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app
 
       - name: Connect to EC2 and deploy
         run: |
-          ssh ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ubuntu/app
             docker-compose down
             docker image prune -af
