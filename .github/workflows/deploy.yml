@@ -16,6 +16,7 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           echo "EC2_HOST: ${{ secrets.EC2_HOST }}"
@@ -23,7 +24,7 @@ jobs:
 
       - name: Copy files to EC2
         run: |
-          rsync -avz --exclude 'target' -e "ssh -i ~/.ssh/id_rsa" ./ ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app
+          scp -o StrictHostKeyChecking=no -r . ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app
 
       - name: Connect to EC2 and deploy
         run: |
