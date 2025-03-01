@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: meilisearch
+    environment:
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
+      - MEILI_ENV=production
+    networks:
+      - meilinet
+    ports:
+      - "7700:7700"
+    volumes:
+      - meili_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "--silent", "--fail", "http://localhost:7700/health"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+
+  blog-api:
+    image: blog-api
+    container_name: blog-api
+    environment:
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
+      - MEILI_URL=http://meilisearch:7700
+    networks:
+      - meilinet
+    ports:
+      - "8080:8080"
+    depends_on:
+      meilisearch:
+        condition: service_healthy
+
+networks:
+  meilinet:
+    driver: bridge
+
+volumes:
+  meili_data:
