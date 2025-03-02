@@ -19,9 +19,13 @@ jobs:
           chmod 700 ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          echo "EC2_HOST: ${{ secrets.EC2_HOST }}"
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
 
       - name: Copy files to EC2
         run: |
-          scp -o StrictHostKeyChecking=no -r . ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app
+          rsync -av --exclude='.git' ./ ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
