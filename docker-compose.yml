@@ -11,8 +11,6 @@ services:
       - meilinet
     ports:
       - "7700:7700"
-    volumes:
-      - meili_data:/meili_data
     healthcheck:
       test: ["CMD", "curl", "--silent", "--fail", "http://localhost:7700/health"]
       interval: 30s
@@ -37,6 +35,3 @@ services:
 networks:
   meilinet:
     driver: bridge
-
-volumes:
-  meili_data:
