@@ -301,7 +301,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "blog-search-api"
+name = "blog-api"
 version = "1.0.0"
 dependencies = [
  "actix-web",

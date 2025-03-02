@@ -96,14 +96,14 @@ async fn search_handler(
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
 
-    dotenv::dotenv().expect("Failed to read .env file");
+    dotenv::dotenv().ok();
 
     let config = MeiliConfig {
         url: env_var("MEILI_URL").unwrap_or_else(|e| {
             eprintln!("{}", e);
             std::process::exit(1);
         }),
-        api_key: env_var("MEILI_API_KEY").unwrap_or_else(|e| {
+        api_key: env_var("MEILI_MASTER_KEY").unwrap_or_else(|e| {
             eprintln!("{}", e);
             std::process::exit(1);
         }),
@@ -121,7 +121,7 @@ async fn main() -> std::io::Result<()> {
             .service(status)
             .service(search_handler)
     })
-    .bind("localhost:8080")?
+    .bind("0.0.0.0:8080")?
     .run()
     .await
 }
