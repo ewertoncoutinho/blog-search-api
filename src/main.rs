@@ -1,8 +1,16 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
-use serde::{Serialize, Deserialize};
+use chrono::Utc;
 use reqwest::Client;
+use serde::{Serialize, Deserialize};
 use std::sync::Arc;
 use std::env;
+
+#[derive(Serialize, Deserialize)]
+struct Status {
+    status: String,
+    timestamp: String,
+    message: String,
+}
 
 #[derive(Deserialize)]
 struct SearchQuery {
@@ -33,6 +41,17 @@ struct SearchRequest {
 struct MeiliConfig {
     url: String,
     api_key: String,
+}
+
+#[get("/")]
+async fn status() -> impl Responder {
+    let response = Status {
+        status: "OK".to_string(),
+        timestamp: Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Secs, true),
+        message: "API is running".to_string(),
+    };
+
+    HttpResponse::Ok().json(response)
 }
 
 #[get("/search")]
@@ -99,6 +118,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(client.clone()))
             .app_data(web::Data::new(config.clone()))
+            .service(status)
             .service(search_handler)
     })
     .bind("localhost:8080")?
